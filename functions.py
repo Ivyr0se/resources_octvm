@@ -1,6 +1,7 @@
 import discord
 from discord.utils import get
-
+from discord.ext import commands
+bot = commands.Bot(command_prefix="#")
 
 
 async def change_db(ch_name, new):
