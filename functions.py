@@ -1,6 +1,3 @@
-import discord
-from discord.utils import get
-
 
 async def change_db(ch_name, new):
                 fetch_arg = ch_name
