@@ -1,9 +1,3 @@
-import discord
-from discord.utils import get
-from discord.ext import commands
-bot = commands.Bot(command_prefix="#")
-
-
 async def change_db(ch_name, new):
                 fetch_arg = ch_name
                 db_func = discord.utils.get(bot.get_all_channels(), name=fetch_arg)
