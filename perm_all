@@ -1,0 +1,8 @@
+Can be used to change a permission of all the roles that exist within a guild.
+
+**Syntax:** perm_all (permission) (True / False)
+**Example Usage:** perm_all mention_everyone False
+
+For a list of valid permissions, visit this website - https://discordpy.readthedocs.io/en/stable/api.html?highlight=permissions#discord.Permissions
+
+This is a Developer command and can only be used by those which have Developer access.
