@@ -1,3 +1,4 @@
 Kicks a given user.
-Syntax: kick (user_mention)
-Example Usage: kick @Azrael#4441
+
+**Syntax:** kick (user_mention)
+**Example Usage:** kick @Azrael#4441
