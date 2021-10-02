@@ -1,0 +1,6 @@
+Can be used to change a database entry contained inside a database channel.
+
+**Syntax:** edit_db (channel_name) (new_entry)
+**Example Usage:** edit_db perm_on_member_join False
+
+This is a Developer command and can only be used by those which have Developer access.
