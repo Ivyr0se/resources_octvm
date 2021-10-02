@@ -1,0 +1,1 @@
+Shows the list of available commands
