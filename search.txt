@@ -1,0 +1,4 @@
+Can be used to search for information on Wikipedia.
+
+**Syntax:** search (keyword)
+**Example Usage:** search discord
