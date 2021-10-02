@@ -1,0 +1,6 @@
+Can be used to track a stock.
+
+**Syntax:** stock (stock_name) (remind_in)
+**Example Usage:** stock AMC 60
+
+remind_in is the number of minutes you want the bot to wait before telling you the new stock price.
