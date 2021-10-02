@@ -1,6 +1,6 @@
 Shows you detailed information of a specific command.
-Syntax: docs (command_name)
-Example Usage: docs mute
 
+**Syntax:** docs (command_name)
+**Example Usage:** docs mute
 
 If the argument, aka the command name, doesn't exist, it gives out the "Invalid argument" error.
