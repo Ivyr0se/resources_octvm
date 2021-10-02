@@ -1,3 +1,3 @@
-Description: Unmutes a given user. 
+Unmutes a given user. 
 Syntax: unmute 
 Example Usage: unmute @Azrael#4441
