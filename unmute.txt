@@ -1,3 +1,4 @@
 Unmutes a given user. 
-Syntax: unmute 
-Example Usage: unmute @Azrael#4441
+
+**Syntax:** unmute 
+**Example Usage:** unmute @Azrael#4441
