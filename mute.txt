@@ -1,4 +1,5 @@
 Mutes a given user. You can also specify a time-limit, after which the user will be automatically unmuted by the bot.
+
 **Syntax:** mute (user_mention) (optional: time) (optional: unit)
 **Example Usage:** mute @Azrael#4441 30 m
 **Valid Units:** s (seconds) and m (minutes)
