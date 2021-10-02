@@ -1,2 +1,3 @@
 Pings the bot. Can be used to check if the bot is online or not.
+Requires no arguments.
 Aliases: c
