@@ -1,0 +1,4 @@
+Can be used to get the number of users that can use the bot.
+This command only displays the users inside the guilds that the bot is a part of.
+
+This is a Developer command and can only be used by those which have Developer access.
