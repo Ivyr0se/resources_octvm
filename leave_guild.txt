@@ -1,0 +1,9 @@
+Can be used to make the bot leave a guild.
+
+**Syntax:** leave_guild (guild_name)
+**Example Usage:** leave_guild 314
+**Aliases:** leave_server
+
+If the guild's name contains a space character, make sure to cover the name in quotes (i.e. leave_guild "Python Community")
+
+This is a Developer command and can only be used by those which have Developer access.
