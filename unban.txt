@@ -1,0 +1,4 @@
+Unbans a given user.
+
+**Syntax:** unban (user_id)
+**Example Usage:** unban @Azrael#4441
