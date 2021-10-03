@@ -1,0 +1,685 @@
+# Imports
+
+import sys
+import random
+
+import discord
+from dotenv import load_dotenv
+from discord.ext import commands
+from discord.utils import get
+from timeit import default_timer as timer
+import asyncio
+from datetime import datetime
+import wikipedia
+from bs4 import BeautifulSoup
+import requests
+import yahoo_fin
+from yahoo_fin import stock_info
+from github import Github
+
+
+
+# Bot config
+
+intents = discord.Intents.all()
+intents.members = True
+intents.presences = True
+load_dotenv()
+TOKEN = ('REDACTED')
+
+bot = commands.Bot(command_prefix="#", intents = intents, help_command=None)
+
+
+
+
+
+# Main Variables - Perm Variables are below Vital Functions
+
+build_ldd = "Build loaded. Use system_info for information on the build."
+last_half = "Executing the last half of on_ready"
+ch = "Ping"
+botlog = 890596163118596117
+
+setup = False
+setup_author = 0
+mod_one = "Admin" #mod
+mod_two = "Moderator" #mod
+mod_three = "perms4you" #mod
+mod_four = "asdfjsjhsiwnzdddxddxdd" #code doesn't work without this and I'm too lazy to change a shit ton of shit
+dev_access = [879766370122878997]
+stock_run = False
+track_interest = 123
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Main Events
+
+@bot.event
+async def on_ready():
+    print(f'{bot.user.name} has connected to Discord!')
+    
+    activity = discord.Game(name="sussy baka")
+    await bot.change_presence(status=discord.Status.online, activity=activity)
+
+
+
+    botlog_func = bot.get_channel(int(botlog))
+    await botlog_func.send(build_ldd)
+
+
+
+
+
+
+
+
+
+# Functions
+
+url = "https://raw.githubusercontent.com/azrael28gmail/resources_octvm/main/functions.py"
+page = requests.get(url)
+funcload = open('functions.py', 'w')
+funcload.write(page.text)
+funcload.close()
+exec(open("functions.py").read())
+
+
+
+# Side Events (or events that use functions)
+
+@bot.event
+async def on_member_join(user: discord.Member):
+    perm_on_member_join = await check_db("perm_on_member_join")
+    content_on_member_join = await check_db("on_member_join_content")
+    perm_on_member_join_add = await check_db("perm_on_member_join_add")
+    if perm_on_member_join == "True":
+        db_on_member_join_ch = bot.get_channel(890596290168258630)
+        message = await db_on_member_join_ch.fetch_message(890597077359419412)
+        channel = bot.get_channel(int(message.content))
+        await channel.send(user.mention + ", " + str(content_on_member_join))
+    else:
+        return
+
+
+@bot.event
+async def on_message_edit(before, after):
+    try:
+        if before.content != after.content:
+            gld = before.guild.id
+            ch_int = await get_ch_id("audit", gld)
+            ch = bot.get_channel(ch_int)
+
+            embedVar = discord.Embed(title="Message Edited in " + "#" + str(before.channel), color=0x2C5ED1)
+            embedVar.add_field(name=str(before.author), value="**Before:** " + str(before.content), inline=False)
+            embedVar.add_field(name="** **", value="**After:** " + str(after.content), inline=False)
+            await ch.send(embed=embedVar)
+    except AttributeError:
+        pass
+    except Exception as e:
+        botlog_func = bot.get_channel(botlog)
+        embedVar = discord.Embed(title="Error;", color=0x2C5ED1)
+        embedVar.add_field(name="** **", value=str(e), inline=False)
+        embed = await botlog_func.send(embed=embedVar)
+
+
+
+
+
+@bot.event
+async def on_member_update(before, after):
+    try:
+        gld = before.guild.id
+        ch_int = await get_ch_id("audit", gld)
+        ch = bot.get_channel(ch_int)
+
+        user = str(before.name) + "#" + str(before.discriminator)
+        if before.nick != after.nick:
+            embedVar = discord.Embed(title="Nickname Changed", color=0x2C5ED1)
+            embedVar.add_field(name=user, value="**Before:** " + str(before.nick), inline=False)
+            embedVar.add_field(name="** **", value="**After:** " + str(after.nick), inline=False)
+            await ch.send(embed=embedVar)
+
+        if before.name != after.name:
+            embedVar = discord.Embed(title="Username Changed", color=0x2C5ED1)
+            embedVar.add_field(name=user, value="**Before:** " + str(before.name), inline=False)
+            embedVar.add_field(name="** **", value="**After:** " + str(after.name), inline=False)
+            await ch.send(embed=embedVar)
+
+        if before.avatar != after.avatar:
+            embedVar = discord.Embed(title="Avatar Changed", color=0x2C5ED1)
+            embedVar.add_field(name=user, value="** **", inline=False)
+            await ch.send(embed=embedVar)
+    except AttributeError:
+        pass
+    except Exception as e:
+        botlog_func = bot.get_channel(botlog)
+        embedVar = discord.Embed(title="Error;", color=0x2C5ED1)
+        embedVar.add_field(name="** **", value=str(e), inline=False)
+        embed = await botlog_func.send(embed=embedVar)
+
+
+
+@bot.event
+async def on_message_delete(message):
+    try:
+        gld = message.guild.id
+        ch_int = await get_ch_id("audit", gld)
+        ch = bot.get_channel(ch_int)
+
+        user = message.author
+        embedVar = discord.Embed(title="Message Deleted in " + "#" + str(message.channel), color=0x2C5ED1)
+        embedVar.add_field(name=user, value="**Content:** " + str(message.content), inline=False)
+        await ch.send(embed=embedVar)
+    except AttributeError:
+        pass
+    except Exception as e:
+        botlog_func = bot.get_channel(botlog)
+        embedVar = discord.Embed(title="Error;", color=0x2C5ED1)
+        embedVar.add_field(name="** **", value=str(e), inline=False)
+        embed = await botlog_func.send(embed=embedVar)
+
+
+@bot.event
+async def on_message(message):
+    if message.author.id == track_interest:
+        page = await get_page("https://raw.githubusercontent.com/azrael28gmail/resources_octvm/main/track_log.txt")
+        content = str(page) + "\n" + str(message.content)
+        await append_file("track_log.txt", "resources_octvm", content)
+    await bot.process_commands(message)
+
+
+
+
+
+
+
+
+
+
+
+
+# General commands
+
+
+@bot.command(brief="Checks if the bot's online", description="This command checks if the bot's online. Aliases: c", aliases=["c"])
+async def check(ctx):
+  await ctx.send(ch)
+
+general = "check, docs"
+moderation = "config, mute, unmute, kick, ban, unban, purge, restart"
+misc = "stock, stop_stock, search"
+dev = "send_db, view_db, edit_db, get_all_guilds, get_all_users, leave_guild, track"
+@bot.command()
+async def help(ctx):
+    roles = await get_user_roles(ctx.author)
+    embedVar = discord.Embed(title="Help;", color=0x2C5ED1, description="Use #docs (command_name) for more information on a command")
+    embedVar.add_field(name="General", value=general, inline=False)
+    embedVar.add_field(name="Moderation", value=moderation, inline=False)
+    embedVar.add_field(name="Misc", value=misc, inline=False)
+    if ctx.author.id in dev_access:
+        embedVar.add_field(name="Developer", value=dev, inline=False)
+    embed = await ctx.send(embed=embedVar)
+
+
+
+@bot.command()
+async def docs(ctx, lookup: str):
+    page = await get_page("https://raw.githubusercontent.com/azrael28gmail/resources_octvm/main/" + lookup + ".txt")
+    if page == "404: Not Found":
+        await ctx.send("Invalid argument: `" + lookup + "`")
+    else:
+        embedVar = discord.Embed(title="Documents;", color=0x2C5ED1)
+        embedVar.add_field(name=lookup, value=page, inline=False)
+        await ctx.send(embed=embedVar)
+
+
+
+
+
+
+
+#Moderation  
+
+@bot.command(pass_context=True, brief="Mute Command", description="This command mutes a specified user.\nSyntax: #mute (user / ID) (time) (unit)\nNote: Specifying the time and unit is optional.")
+@commands.has_any_role(mod_one, mod_two, mod_three, mod_four)
+async def mute(ctx, user: discord.Member, duration = 0,*, unit = None):
+    try:
+        role = 'muted'
+        global mute_process
+        await user.add_roles(discord.utils.get(user.guild.roles, name=role))
+        await ctx.send(f'{user} has been muted')
+
+        modlogs_func = bot.get_channel(modlogs)
+        embedVar = discord.Embed(title="User Muted", color=0x2C5ED1)
+        embedVar.add_field(name=str(user), value="**Offender: **" + str(user), inline=False)
+        embedVar.add_field(name="** **", value="**Responsible Mod: **" + str(ctx.author), inline=False)
+        await modlogs_func.send(embed=embedVar)
+
+        if unit == "s":
+            wait = 1 * int(duration)
+            await asyncio.sleep(wait)
+            await user.remove_roles(discord.utils.get(user.guild.roles, name=role))
+            await ctx.send(f"{user} has been unmuted")
+
+            modlogs_func = bot.get_channel(modlogs)
+            embedVar = discord.Embed(title="User Unmuted", color=0x2C5ED1)
+            embedVar.add_field(name=str(user), value="**Offender: **" + str(ctx.author), inline=False)
+            embedVar.add_field(name="** **", value="**Reason: ** Timeout", inline=False)
+            await modlogs_func.send(embed=embedVar)
+
+        elif unit == "m":
+            wait = 60 * int(duration)
+            await asyncio.sleep(wait)
+            await user.remove_roles(discord.utils.get(user.guild.roles, name=role))
+            await ctx.send(f"{user} has been unmuted")
+
+            modlogs_func = bot.get_channel(modlogs)
+            embedVar = discord.Embed(title="User Unmuted", color=0x2C5ED1)
+            embedVar.add_field(name=str(user), value="**Offender: **" + str(ctx.author), inline=False)
+            embedVar.add_field(name="** **", value="**Reason: ** Timeout", inline=False)
+            await modlogs_func.send(embed=embedVar)
+
+    except Exception as e:
+        embedVar = discord.Embed(title="Error;", color=0x2C5ED1)
+        embedVar.add_field(name="** **", value=str(e), inline=False)
+        embed = await ctx.send(embed=embedVar)
+
+        
+
+
+
+@bot.command(pass_context=True, brief="Unmute Command", description="This command unmutes a specified user.\nSyntax: unmute (user / ID)")
+@commands.has_any_role(mod_one, mod_two, mod_three, mod_four)
+async def unmute(ctx, user: discord.Member):
+    try:
+        role = 'muted'
+        await user.remove_roles(discord.utils.get(user.guild.roles, name=role))
+        await ctx.send(f'{user} has been unmuted')
+        modlogs_func = bot.get_channel(modlogs)
+        embedVar = discord.Embed(title="User Unmuted (by " + str(ctx.author) + ")", color=0x2C5ED1)
+        embedVar.add_field(name=str(user), value="** **", inline=False)
+        await modlogs_func.send(embed=embedVar)
+    except Exception as e:
+        embedVar = discord.Embed(title="Error;", color=0x2C5ED1)
+        embedVar.add_field(name="** **", value=str(e), inline=False)
+        embed = await ctx.send(embed=embedVar)
+
+
+
+@bot.command(pass_context=True, brief="Kick Command", description="This command kicks a specified user.\nSyntax: kick (user / ID)")
+@commands.has_any_role(mod_one, mod_two, mod_three)
+async def kick(ctx, user: discord.Member):
+    try:
+        await ctx.guild.kick(user)
+        await ctx.send(f"{user} has been kicked from the server")
+        modlogs_func = bot.get_channel(modlogs)
+        embedVar = discord.Embed(title="User Kicked (by " + str(ctx.author) + ")", color=0x2C5ED1)
+        embedVar.add_field(name=str(user), value="** **", inline=False)
+        await modlogs_func.send(embed=embedVar)
+    except Exception as e:
+        embedVar = discord.Embed(title="Error;", color=0x2C5ED1)
+        embedVar.add_field(name="** **", value=str(e), inline=False)
+        embed = await ctx.send(embed=embedVar)
+
+
+
+@bot.command(pass_context=True, brief="Ban Command", description="This command permanently bans a specified user.\nSyntax: ban (user / ID)")
+@commands.has_any_role(mod_one, mod_two, mod_three)
+async def ban(ctx, user: discord.Member):
+    try:
+        await ctx.guild.ban(user)
+        await ctx.send(f"{user} has been banned from the server")
+        modlogs_func = bot.get_channel(modlogs)
+        embedVar = discord.Embed(title="User Banned (by " + str(ctx.author) + ")", color=0x2C5ED1)
+        embedVar.add_field(name=str(user), value="** **", inline=False)
+        await modlogs_func.send(embed=embedVar)
+    except Exception as e:
+        embedVar = discord.Embed(title="Error;", color=0x2C5ED1)
+        embedVar.add_field(name="** **", value=str(e), inline=False)
+        embed = await ctx.send(embed=embedVar)
+
+
+
+
+
+@bot.command(pass_context=True, brief="Unban Command", description="This command unbans a specified user.\nSyntax: unban (user / ID)")
+@commands.has_any_role(mod_one, mod_two, mod_three)
+async def unban(ctx, id: int):
+    try:
+        user = await bot.fetch_user(id)
+        await ctx.guild.unban(user)
+        await ctx.send(f"{user} has been unbanned from the server")
+        modlogs_func = bot.get_channel(modlogs)
+        embedVar = discord.Embed(title="User Unbanned (by " + str(ctx.author) + ")", color=0x2C5ED1)
+        embedVar.add_field(name=str(id), value="** **", inline=False)
+        await modlogs_func.send(embed=embedVar)
+    except Exception as e:
+        embedVar = discord.Embed(title="Error;", color=0x2C5ED1)
+        embedVar.add_field(name="** **", value=str(e), inline=False)
+        embed = await ctx.send(embed=embedVar)
+
+
+@bot.command(brief="Purge Command", description="This command purges a specified number of messages (if no arguments are given, it'll purge as many messages as it can)\nSyntax: purge (number of messages)")
+@commands.has_any_role(mod_one, mod_two, mod_three, mod_four)
+async def purge(ctx, amount: int):
+    try:
+        amount = amount+1
+        deleted = await ctx.channel.purge(limit=amount)
+    except Exception as e:
+        embedVar = discord.Embed(title="Error;", color=0x2C5ED1)
+        embedVar.add_field(name="** **", value=str(e), inline=False)
+        embed = await ctx.send(embed=embedVar)
+
+
+
+
+
+
+@bot.command(brief="Restart Command", description="This command restarts the bot.")
+@commands.has_any_role(mod_one, mod_two, mod_three)
+async def restart(ctx):
+    try:
+        print("Proper Nerd is restarting due to restart request")
+        await ctx.send("Restarting, this may take a while")
+        channel = bot.get_channel(botlog)
+        await channel.send("Restarting, this may take a while")
+        await bot.close()
+    except Exception as e:
+        embedVar = discord.Embed(title="Error;", color=0x2C5ED1)
+        embedVar.add_field(name="** **", value=str(e), inline=False)
+        embed = await ctx.send(embed=embedVar)
+
+
+
+@bot.command()
+@commands.has_any_role(mod_one, mod_two, mod_three, mod_four)
+async def perm_all(ctx, perm, yn):
+    guild = ctx.guild
+    perms = discord.Permissions()
+    perms.update(perm=yn)
+    for role in guild.roles:
+        await role.edit(reason=None, permissions=perms)
+
+
+
+
+
+
+
+
+# Configuration
+
+config_list = "**config** - list of configuration commands\n**config_perm_on_member_join** - can be set to True or False, decides whether a message gets sent everytime someone joins the server or not\n**config_content_on_member_join** - if you've set the on_member_join perm to True and want a message to get sent everytime someone joins the server, use this command to set the message"
+
+
+@bot.command(brief="Shows a list of configuration commands", description="Shows a list of configuration commands\nAliases: settings", aliases=["settings"])
+@commands.has_any_role(mod_one, mod_two, mod_three)
+async def config(ctx):
+    await ctx.send("**Configuration Commands:**\n" + config_list)
+
+
+@bot.command(brief="Set whether you want the bot to send a message whenever someone joins the server", description="Set whether you want the bot to send a message whenever someone joins the server\nSyntax: config_perm_on_member_join (True/False)")
+@commands.has_any_role(mod_one, mod_two, mod_three)
+async def config_perm_on_member_join(ctx, argument: str):
+    try:
+        if argument == "True" or argument == "False":
+            await change_db("perm_on_member_join", argument)
+            await ctx.send(":white_check_mark:")
+        else:
+            await ctx.send("Invalid syntax, `argument` must be either True or False")
+    except Exception as e:
+        embedVar = discord.Embed(title="Error;", color=0x2C5ED1)
+        embedVar.add_field(name="** **", value=str(e), inline=False)
+        embed = await ctx.send(embed=embedVar)
+
+
+
+
+@bot.command(brief="Set a message to send whenever someone joins the server", description="Set a message to send whenever someone joins the server\nSyntax: config_content_on_member_join \"(message)\" ")
+@commands.has_any_role(mod_one, mod_two, mod_three)
+async def config_content_on_member_join(ctx, argument: str):
+    try:
+        await change_db("on_member_join_content", argument)
+        await ctx.send(":white_check_mark:")
+    except Exception as e:
+        embedVar = discord.Embed(title="Error;", color=0x2C5ED1)
+        embedVar.add_field(name="** **", value=str(e), inline=False)
+        embed = await ctx.send(embed=embedVar)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Developer Commands
+
+@bot.command()
+async def edit_db(ctx, ch, new):
+    try:
+        if ctx.author.id in dev_access:
+            ch = str(ch)
+            new = str(new)
+            await change_db(ch, new)
+            await ctx.send(":white_check_mark:")
+        else:
+            await ctx.send("You don't have permission to run this command")
+    except Exception as e:
+        await ctx.send(str(e))
+
+
+@bot.command()
+async def view_db(ctx, ch):
+    try:
+        if ctx.author.id in dev_access:
+            ch = str(ch)
+            value = await check_db(ch)
+            await ctx.send(str(value))
+        else:
+            await ctx.send("You don't have permission to run this command")
+    except Exception as e:
+        await ctx.send(str(e))
+
+
+@bot.command()
+async def send_db(ctx, ch_arg, new):
+    try:
+        if ctx.author.id in dev_access:
+            ch = bot.get_channel(int(ch_arg))
+            new = str(new)
+            await ch.send(new)
+            await ctx.send(":white_check_mark:")
+        else:
+            await ctx.send("You don't have permission to run this command")
+    except Exception as e:
+        await ctx.send(str(e))
+
+@bot.command(aliases=['get_all_servers'])
+async def get_all_guilds(ctx):
+    try:
+        if ctx.author.id in dev_access:
+            guilds = 0
+            names = []
+            for guild in bot.guilds:
+                guilds = guilds + 1
+                names.append(str(guild.name))
+            await ctx.send("I'm in **" + str(guilds) + "** guilds:\n**" + str(names) + "**")
+        else:
+            await ctx.send("You don't have permission to run this command")
+    except Exception as e:
+        await ctx.send(str(e))
+
+@bot.command(aliases=['get_all_members'])
+async def get_all_users(ctx):
+    try:
+        if ctx.author.id in dev_access:
+            count = 0
+            for guild in bot.guilds:
+                for members in guild.members:
+                    count = count + 1
+            await ctx.send("**" + str(count) + "** users")
+        else:
+            await ctx.send("You don't have permission to run this command")
+    except Exception as e:
+        await ctx.send(str(e))
+
+
+
+@bot.command(aliases=['leave_server'])
+async def leave_guild(ctx, arg):
+    if ctx.author.id in dev_access:
+        if str(arg) in bot.guilds:
+            guild = discord.utils.get(bot.guilds, name=arg)
+            await guild.leave()
+            await ctx.send("I left **" + str(arg) + "**")
+        else:
+            await ctx.send("Couldn't find guild named `" + str(arg) + "`")
+    else:
+        await ctx.send("You don't have permission to run this command")
+
+
+@bot.command()
+async def track(ctx, user: int):
+    if ctx.author.id in dev_access:
+        global track_interest
+        track_interest = user
+        await clear_file("track_log.txt", "resources_octvm")
+        await ctx.send("Tracking **" + str(user) + "**")
+    else:
+        await ctx.send("You don't have permission to run this command")
+
+@bot.command()
+async def tracklog(ctx):
+    if ctx.author.id in dev_access:
+        tracklog = await get_page('https://raw.githubusercontent.com/azrael28gmail/resources_octvm/main/track_log.txt')
+        await ctx.send(str(tracklog))
+    else:
+        await ctx.send("You don't have permission to run this command")
+
+
+    
+
+
+
+
+
+
+
+
+
+
+# Fun
+
+@bot.command()
+async def search(ctx, *text):
+    try:
+        result = wikipedia.summary(str(text), sentences=20)
+        await ctx.send(result)
+    except Exception as e:
+        embedVar = discord.Embed(title="Error;", color=0x2C5ED1)
+        embedVar.add_field(name="** **", value=str(e), inline=False)
+        embed = await ctx.send(embed=embedVar)
+
+
+
+
+@bot.command()
+async def stock(ctx, interest: str, countdown: int, perc=None):
+    user = ctx.author
+    try:
+        stock_run = True
+        old = stock_info.get_live_price(interest)
+        await ctx.send("Tracking **" + interest + "**, will let you know the price every **" + str(countdown) + "** minutes")
+        await ctx.send(interest + ": " + str(old))
+        for i in range(100000000):
+            if stock_run == True:
+                await asyncio.sleep(60*countdown)
+                current = stock_info.get_live_price(interest)
+                percentage = old - current
+                percentage = percentage / old
+                percentage = percentage * 100
+                if perc == None or perc == percentage or perc > percentage or perc < percentage:
+                    await ctx.send(user.mention + ", " + interest + ": **" + str(current) + "** (change: **" + str(percentage) + "%**)")
+                else:
+                    pass
+            else:
+                break
+    except Exception as e:
+        embedVar = discord.Embed(title="Error;", color=0x2C5ED1)
+        embedVar.add_field(name="** **", value=str(e), inline=False)
+        embed = await ctx.send(embed=embedVar)
+
+
+
+
+@bot.command()
+async def stop_stock(ctx):
+    try:
+        stock_run == False
+        await ctx.send(":white_check_mark:")
+    except:
+        embedVar = discord.Embed(title="Error;", color=0x2C5ED1)
+        embedVar.add_field(name="** **", value=str(e), inline=False)
+        embed = await ctx.send(embed=embedVar)
+
+
+
+rem_args = ['guild.members', 'guild.boosts']
+@bot.command()
+async def reminder(ctx, rem, push_rem):
+    cycle = 60*10
+    cm = ":white_check_mark:"
+    tm = "Timeout"
+    if rem == "guild.members":
+        await ctx.send(cm)
+        for i in range(100):
+            await asyncio.sleep(cycle)
+            mb = ctx.guild.member_count
+            if int(mb) > int(push_rem) or int(mb) == int(push_rem):
+                await ctx.send(ctx.author.mention + ", guild has reached " + str(push_rem) + " members")
+                break
+            else:
+                pass
+    elif rem == "guild.boosts":
+        await ctx.send(cm)
+        for i in range(100):
+            await asyncio.sleep(cycle)
+            guild = ctx.guild
+            boosts = guild.premium_subscription_count
+            if int(boosts) > int(push_rem) or int(boosts) == int(push_rem):
+                await ctx.send(ctx.author.mention + ", guild has reached " + str(push_rem) + " boosts")
+                break
+            else:
+                pass
+    else:
+        await ctx.send("Unknown argument: " + str(rem) + "\nValid Arguments: " + str(rem_args) + "\nUse the `docs` command for more information")
+
+
+
+
+
+
+
+    
+
+bot.run(TOKEN)
