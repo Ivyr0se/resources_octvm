@@ -47,7 +47,7 @@ async def append_file(filename, reponame, content):
     filename = "/" + filename
     pure_filename = filename.replace("/", "")
     pure_filename = filename.replace(".txt", "")
-    g = Github('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')
+    g = Github(GB_TOKEN)
 
     repo = g.get_user().get_repo(reponame)
     contents = repo.get_contents(filename)
@@ -56,7 +56,7 @@ async def append_file(filename, reponame, content):
 
 async def clear_file(filename, reponame):
     filename = "/" + filename
-    g = Github('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')
+    g = Github(GB_TOKEN)
 
     repo = g.get_user().get_repo(reponame)
     contents = repo.get_contents(filename)
@@ -64,7 +64,7 @@ async def clear_file(filename, reponame):
 
 async def create_file(filename, reponame):
     filename = "/" + filename
-    g = Github('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')
+    g = Github(GB_TOKEN)
 
     repo = g.get_user().get_repo(reponame)
     repo.create_file(filename, "None", "None")
