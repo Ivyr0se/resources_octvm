@@ -4,7 +4,6 @@ async def change_db(ch_name, new):
                 channel_id = db_func.id
                 db_user = bot.get_channel(channel_id)
 
-
                 msg_info = discord.utils.get(await db_user.history(limit=100).flatten())
                 msg = msg_info.content
                 msg_id = msg_info.id
@@ -18,7 +17,6 @@ async def check_db(check: str):
                 channel_id = db_func.id
                 db_user = bot.get_channel(channel_id)
 
-
                 msg_info = discord.utils.get(await db_user.history(limit=100).flatten())
                 msg = msg_info.content
                 msg_id = msg_info.id
@@ -31,9 +29,46 @@ async def get_ch_id(check, guild_id):
                 channel_id = db_func.id
                 return channel_id
 
-
 async def get_user_roles(user):
     roles = []
     for role in user.roles:
-        await roles.append(str(role))
+        roles.append(str(role))
     return roles
+
+
+async def check_list(lst, element):
+    check = False
+    for i in lst:
+        if i == element:
+            check = True
+    return check
+
+async def append_file(filename, reponame, content):
+    filename = "/" + filename
+    pure_filename = filename.replace("/", "")
+    pure_filename = filename.replace(".txt", "")
+    g = Github('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')
+
+    repo = g.get_user().get_repo(reponame)
+    contents = repo.get_contents(filename)
+    repo.update_file(contents.path, "None", content, contents.sha)
+
+
+async def clear_file(filename, reponame):
+    filename = "/" + filename
+    g = Github('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')
+
+    repo = g.get_user().get_repo(reponame)
+    contents = repo.get_contents(filename)
+    repo.update_file(contents.path, "None", "None", contents.sha)
+
+async def create_file(filename, reponame):
+    filename = "/" + filename
+    g = Github('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')
+
+    repo = g.get_user().get_repo(reponame)
+    repo.create_file(filename, "None", "None")
+
+async def get_page(url):
+    page = requests.get(url)
+    return page.text
