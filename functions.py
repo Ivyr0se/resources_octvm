@@ -62,12 +62,6 @@ async def clear_file(filename, reponame):
     contents = repo.get_contents(filename)
     repo.update_file(contents.path, "None", "None", contents.sha)
 
-async def create_file(filename, reponame):
-    g = Github(GB_TOKEN)
-
-    repo = g.get_user().get_repo(reponame)
-    contents = repo.get_contents(filename)
-    repo.create_file(filename, "None", "None")
 
 async def get_page(url):
     page = requests.get(url)
