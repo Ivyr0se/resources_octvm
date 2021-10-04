@@ -68,7 +68,7 @@ async def create_file(filename, reponame):
 
     repo = g.get_user().get_repo(reponame)
     contents = repo.get_contents(filename)
-    repo.create_file(contents.path, "None", "None")
+    repo.create_file(filename, "None", "None")
 
 
 
