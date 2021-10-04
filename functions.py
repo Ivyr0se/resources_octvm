@@ -69,7 +69,7 @@ async def create_file(filename, reponame):
 
     repo = g.get_user().get_repo(reponame)
     contents = repo.get_contents(filename)
-    repo.create_file(pure_filename, "None", "None")
+    repo.create_file("resources_octvm", "None", "None")
 
 
 
