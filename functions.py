@@ -63,13 +63,12 @@ async def clear_file(filename, reponame):
     repo.update_file(contents.path, "None", "None", contents.sha)
 
 async def create_file(filename, reponame):
-    pure_filename = filename
+    pure_filename = str(reponame) + "/" + str(filename)
     filename = "/" + filename
     g = Github(GB_TOKEN)
 
     repo = g.get_user().get_repo(reponame)
-    contents = repo.get_contents(filename)
-    repo.create_file(pure_filename, "None", "None")
+    repo.create_file(filename, "None", "None")
 
 
 
