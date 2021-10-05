@@ -76,7 +76,6 @@ async def get_page(url):
 
 async def loop_ensurer(type):
   log = bot.get_channel(botlog)
-  global stock_instance
   if type == "ens_track":
     result_inst = await check_db("track_instance")
     result_int = await check_db("track_interest")
@@ -92,7 +91,6 @@ async def loop_ensurer(type):
     await log.send("Loop Ensurer initiated, type: stock")
     if result_inst == "True" and stock_instance == False:
       # START STOCK LOOP AGAIN
-      stock_instance = True
       user_soft = await check_db("stock_user")
       user = bot.get_user(user_soft)
       countdown = await check_db("stock_countdown")
@@ -101,14 +99,11 @@ async def loop_ensurer(type):
       channel = bot.get_channel(int(channel_soft))
       old = stock_info.get_live_price(interest)
       for i in range(100):
-        if stock_instance == True:
-          await asyncio.sleep(60*countdown)
-          current = stock_info.get_live_price(interest)
-          percentage = old - current
-          percentage = percentage / old
-          percentage = percentage * 100
-          await channel.send(user.mention + ", " + interest + ": **" + str(current) + "** (change: **" + str(percentage) + "%**)")
-        else:
-          break
+        await asyncio.sleep(60*countdown)
+        current = stock_info.get_live_price(interest)
+        percentage = old - current
+        percentage = percentage / old
+        percentage = percentage * 100
+        await channel.send(user.mention + ", " + interest + ": **" + str(current) + "** (change: **" + str(percentage) + "%**)")
       
     
