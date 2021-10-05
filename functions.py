@@ -91,8 +91,6 @@ async def loop_ensurer(type):
     await log.send("Loop Ensurer initiated, type: stock")
     if result_inst == "True" and stock_instance == False:
       # START STOCK LOOP AGAIN
-      user_soft = await check_db("stock_user")
-      user = bot.get_user(user_soft)
       countdown = await check_db("stock_countdown")
       countdown = int(countdown)
       channel_soft = await check_db("stock_channel")
@@ -104,6 +102,6 @@ async def loop_ensurer(type):
         percentage = old - current
         percentage = percentage / old
         percentage = percentage * 100
-        await channel.send(user.mention + ", " + interest + ": **" + str(current) + "** (change: **" + str(percentage) + "%**)")
+        await channel.send(interest + ": **" + str(current) + "** (change: **" + str(percentage) + "%**)")
       
     
