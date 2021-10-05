@@ -73,35 +73,3 @@ async def create_file(filename, reponame):
 async def get_page(url):
     page = requests.get(url)
     return page.text
-
-async def loop_ensurer(type):
-  log = bot.get_channel(botlog)
-  if type == "ens_track":
-    result_inst = await check_db("track_instance")
-    result_int = await check_db("track_interest")
-    result_int = int(result_int)
-    await log.send("Loop Ensurer initiated, type: track")
-    if result_inst == "True" and track_instance == False:
-      global track_interest
-      track_interest = int(result_int)
-      await log.send("Finished Loop Ensurer, type: track")
-  elif type == "ens_stock":
-    result_inst = await check_db("stock_instance")
-    interest = await check_db("stock_interest")
-    await log.send("Loop Ensurer initiated, type: stock")
-    if result_inst == "True" and stock_instance == False:
-      # START STOCK LOOP AGAIN
-      countdown = await check_db("stock_countdown")
-      countdown = int(countdown)
-      channel_soft = await check_db("stock_channel")
-      channel = bot.get_channel(int(channel_soft))
-      old = stock_info.get_live_price(interest)
-      for i in range(100):
-        await asyncio.sleep(60*countdown)
-        current = stock_info.get_live_price(interest)
-        percentage = old - current
-        percentage = percentage / old
-        percentage = percentage * 100
-        await channel.send(interest + ": **" + str(current) + "** (change: **" + str(percentage) + "%**)")
-      
-    
