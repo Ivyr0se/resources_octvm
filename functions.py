@@ -91,6 +91,7 @@ async def loop_ensurer(type):
     await log.send("Loop Ensurer initiated, type: stock")
     if result_inst == "True" and stock_instance == False:
       # START STOCK LOOP AGAIN
+      stock_instance = True
       user_soft = await check_db("stock_user")
       user = bot.get_user(user_soft)
       countdown = await check_db("stock_countdown")
