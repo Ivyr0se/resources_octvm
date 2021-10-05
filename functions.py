@@ -94,7 +94,9 @@ async def loop_ensurer(type):
       user_soft = await check_db("stock_user")
       user = bot.get_user(user_soft)
       countdown = await check_db("stock_countdown")
-      channel = await check_db("stock_channel")
+      countdown = int(countdown)
+      channel_soft = await check_db("stock_channel")
+      channel = await bot.get_channel(int(channel_soft))
       old = stock_info.get_live_price(interest)
       for i in range(100):
         if stock_instance == True:
