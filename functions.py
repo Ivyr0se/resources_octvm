@@ -76,6 +76,7 @@ async def get_page(url):
 
 async def loop_ensurer(type):
   log = bot.get_channel(botlog)
+  global stock_instance
   if type == "ens_track":
     result_inst = await check_db("track_instance")
     result_int = await check_db("track_interest")
