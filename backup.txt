@@ -25,8 +25,8 @@ intents = discord.Intents.all()
 intents.members = True
 intents.presences = True
 load_dotenv()
-TOKEN = ('ODkwNTk0NzUzNTUxNDE3MzQ1.YUyE_w.w4IX3oGlKyWUtBNLYWe1XRGfnsI')
-GB_TOKEN = "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"
+TOKEN = 
+GB_TOKEN = 
 
 bot = commands.Bot(command_prefix="#", intents = intents, help_command=None)
 
