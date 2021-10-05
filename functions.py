@@ -94,6 +94,7 @@ async def loop_ensurer(type):
       user_soft = await check_db("stock_user")
       user = bot.get_user(user_soft)
       countdown = await check_db("stock_countdown")
+      channel = await check_db("stock_channel")
       old = stock_info.get_live_price(interest)
       for i in range(100):
         if stock_instance == True:
@@ -102,7 +103,7 @@ async def loop_ensurer(type):
           percentage = old - current
           percentage = percentage / old
           percentage = percentage * 100
-          await ctx.send(user.mention + ", " + interest + ": **" + str(current) + "** (change: **" + str(percentage) + "%**)")
+          await channel.send(user.mention + ", " + interest + ": **" + str(current) + "** (change: **" + str(percentage) + "%**)")
         else:
           break
       
