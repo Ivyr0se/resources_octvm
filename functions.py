@@ -73,3 +73,9 @@ async def create_file(filename, reponame):
 async def get_page(url):
     page = requests.get(url)
     return page.text
+
+
+async def find_stock_price(ctx, interest: str, countdown: int, perc=None):
+  current = stock_info.get_live_price(interest)
+  percentage = old - current; percentage = percentage / old; percentage = percentage * 100
+  return current, percentage
