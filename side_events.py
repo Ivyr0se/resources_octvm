@@ -1,3 +1,7 @@
+# Do it again!
+botlog = 890596163118596117
+botlog_spam = 894969006581248030
+
 @bot.event
 async def on_member_join(user: discord.Member):
     perm_on_member_join = await check_db("perm_on_member_join")
