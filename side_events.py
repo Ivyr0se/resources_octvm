@@ -112,11 +112,17 @@ async def on_message(message):
 
 @bot.event
 async def on_guild_join(guild):
-  log = bot.get_channel(botlog_spam)
-  await log.send("Joined: " + str(guild))
+  if guild == None or guild == " ":
+    pass
+  else:
+    log = bot.get_channel(botlog_spam)
+    await log.send("Joined: " + str(guild))
 
 @bot.event
 async def on_guild_remove(guild):
-  log = bot.get_channel(botlog_spam)
-  await log.send("Left: " + str(guild))
+  if guild == None or guild == " ":
+    pass
+  else:
+    log = bot.get_channel(botlog_spam)
+    await log.send("Left: " + str(guild))
 
