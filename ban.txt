@@ -1,4 +1,0 @@
-Bans a given user.
-
-**Syntax:** ban (user_mention)
-**Example Usage:** ban @Azrael#4441
