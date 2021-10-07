@@ -1,6 +1,0 @@
-Can be used to display the most recent entry inside a database channel.
-
-**Syntax:** view_db (channel_name)
-**Example Usage:** view_db perm_on_member_join
-
-This is a Developer command and can only be used by those which have Developer access.
