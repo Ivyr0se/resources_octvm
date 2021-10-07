@@ -1,3 +1,0 @@
-This command is in beta.
-
-This is a Developer command and can only be used by those which have Developer access.
