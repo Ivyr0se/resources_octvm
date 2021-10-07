@@ -80,7 +80,7 @@ async def find_stock_price(ctx, interest: str):
 # percentage = old - current; percentage = percentage / old; percentage = percentage * 100
   return current
 
-async def load_file(filename):
+def load_file(filename):
   url = "https://raw.githubusercontent.com/azrael28gmail/resources_octvm/main/" + str(filename) + ".py"
   page = requests.get(url)
   funcload = open(f'{filename}.py', 'w')
