@@ -1,2 +1,0 @@
-This command can be used to change parts of the bot.
-To get a list of the things it can change, run the command without any arguemnts (i.e. just run config)
