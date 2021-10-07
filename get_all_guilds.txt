@@ -1,5 +1,0 @@
-Can be used to get the names of guilds that the bot is inside of.
-
-**Aliases:** get_all_servers
-
-This is a Developer command and can only be used by those which have Developer access.
