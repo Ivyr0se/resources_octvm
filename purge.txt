@@ -1,4 +1,0 @@
-Purges a given number of messages.
-
-**Syntax:** purge (number)
-**Example Usage:** purge 5
