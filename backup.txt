@@ -25,8 +25,9 @@ intents = discord.Intents.all()
 intents.members = True
 intents.presences = True
 load_dotenv()
-TOKEN = 
-GB_TOKEN = 
+TOKEN = 'ODkwNTk0NzUzNTUxNDE3MzQ1.YUyE_w.ozSJadMQUQCMBd4Thi-MxXzeXgI'
+GB_TOKEN = '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'
+
 
 bot = commands.Bot(command_prefix="#", intents = intents, help_command=None)
 
@@ -40,6 +41,7 @@ build_ldd = "Build loaded. Use system_info for information on the build."
 last_half = "Executing the last half of on_ready"
 ch = "Ping"
 botlog = 890596163118596117
+botlog_spam = 894969006581248030
 
 setup = False
 setup_author = 0
@@ -48,8 +50,7 @@ mod_two = "Moderator" #mod
 mod_three = "perms4you" #mod
 mod_four = "asdfjsjhsiwnzdddxddxdd" #code doesn't work without this and I'm too lazy to change a shit ton of shit
 dev_access = [879766370122878997]
-stock_instance = False
-stock_interest = None
+stock_run = False
 track_interest = 123
 track_instance = False
 
@@ -207,7 +208,19 @@ async def on_message(message):
         page = await get_page("https://raw.githubusercontent.com/azrael28gmail/resources_octvm/main/track_log.txt")
         content = str(page) + "\n" + str(message.content) + " (" +  str(message.created_at) + "," + str(message.guild) + ")"
         await append_file("track_log.txt", "resources_octvm", content)
+        log = bot.get_channel(botlog_spam); await log.send("Logged a new message: " + str(message.content))
     await bot.process_commands(message)
+
+@bot.event
+async def on_guild_join(guild):
+  log = bot.get_channel(botlog_spam)
+  await log.send("Joined: " + str(guild))
+
+@bot.event
+async def on_guild_remove(guild):
+  log = bot.get_channel(botlog_spam)
+  await log.send("Left: " + str(guild))
+
 
 
 
@@ -636,14 +649,15 @@ async def search(ctx, *text):
 async def stock(ctx, interest: str, countdown: int, perc=None):
     user = ctx.author
     try:
-        stock_instance = True
+        global stock_run
+        stock_run = True
         await change_db("stock_instance", "True")
         await change_db("stock_interest", str(interest))
         old = stock_info.get_live_price(interest)
         await ctx.send("Tracking **" + interest + "**, will let you know the price every **" + str(countdown) + "** minutes")
         await ctx.send(interest + ": " + str(old))
         for i in range(100000000):
-            if stock_instance == True:
+            if stock_run == True:
                 await asyncio.sleep(60*countdown)
                 current = stock_info.get_live_price(interest)
                 percentage = old - current
@@ -666,7 +680,8 @@ async def stock(ctx, interest: str, countdown: int, perc=None):
 @bot.command()
 async def stop_stock(ctx):
     try:
-        stock_run == False
+        global stock_run
+        stock_run = False
         await ctx.send(":white_check_mark:")
     except:
         embedVar = discord.Embed(title="Error;", color=0x2C5ED1)
