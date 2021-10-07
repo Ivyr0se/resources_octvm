@@ -1,6 +1,0 @@
-Can be used to send an entry in a database channel. If an entry exists already, use edit_db instead.
-
-**Syntax:** send_db (channel_id) (entry_content)
-**Example Usage:** send_db 12345 False
-
-This is a Developer command and can only be used by those which have Developer access.
